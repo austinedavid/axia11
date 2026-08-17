@@ -5,6 +5,8 @@ import mongoose from "mongoose";
 import dotenv from "dotenv";
 dotenv.config();
 
+const name = "david";
+
 function connectDB() {
   mongoose
     .connect(process.env.DBURL)
