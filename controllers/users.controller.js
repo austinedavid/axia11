@@ -1,5 +1,6 @@
 import userModel from "../models/users.model.js";
 import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
 
 export const getAllUsers = async (req, res) => {
   try {
@@ -58,7 +59,10 @@ export const loginUser = async (req, res) => {
     if (!correctPassword) {
       return res.json({ message: "Incorrect credentials" });
     }
-    return res.json(isUser);
+    const payload = { id: isUser.id, email: isUser.email };
+    const token = jwt.sign(payload, "secrete");
+    const body = { email: isUser.email, name: isUser.name, token };
+    return res.json(body);
   } catch (error) {
     return res.json({ message: error.message });
   }
