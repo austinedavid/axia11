@@ -22,9 +22,10 @@ export const createUser = async (req, res) => {
     // Continue with registration
     const user = new userModel({ ...others, password: hashedPassword });
     await user.save();
-    return res.json({ message: "registration successful!!" });
+
+    return res.status(201).json({ message: "registration successful!!" });
   } catch (error) {
-    return res.send(error.message);
+    return res.status(500).send(error.message);
   }
 };
 
@@ -50,19 +51,23 @@ export const deleteUser = async (req, res) => {
 
 export const loginUser = async (req, res) => {
   const { password, email } = req.body;
+  if (!password || !email)
+    return res.status(400).json({ message: "enter all credentials" });
   try {
     const isUser = await userModel.findOne({ email });
     if (!isUser) {
-      return res.json({ message: "User does not exist, register now" });
+      return res
+        .status(404)
+        .json({ message: "User does not exist, register now" });
     }
     const correctPassword = await bcrypt.compare(password, isUser.password);
     if (!correctPassword) {
       return res.json({ message: "Incorrect credentials" });
     }
     const payload = { id: isUser.id, email: isUser.email };
-    const token = jwt.sign(payload, "secrete");
+    const token = jwt.sign(payload, process.env.JWT_SECRETE);
     const body = { email: isUser.email, name: isUser.name, token };
-    return res.json(body);
+    return res.status(200).json(body);
   } catch (error) {
     return res.json({ message: error.message });
   }
