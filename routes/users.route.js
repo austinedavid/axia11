@@ -10,7 +10,7 @@ import authenticationMiddleware from "../middlewares/authentication.middleware.j
 
 const routes = express.Router();
 
-routes.get("/users", authenticationMiddleware, getAllUsers);
+routes.get("/users", getAllUsers);
 
 routes.post("/users", createUser);
 

@@ -6,6 +6,7 @@ const routes = express.Router();
 
 routes.get("/post", getAllPost);
 
+// Route specific middleware
 routes.post("/post", authenticationMiddleware, createPost);
 
 export default routes;
