@@ -6,6 +6,8 @@ import dotenv from "dotenv";
 import errorHandlingMiddleware from "./middlewares/errorhandling.middleware.js";
 dotenv.config();
 import cors from "cors";
+import multer from "multer";
+const uploads = multer({ dest: "./uploads" });
 
 function connectDB() {
   mongoose
@@ -30,7 +32,41 @@ app.post("/", (req, res) => {
 });
 app.use(usersRoute);
 app.use(postRoute);
-
+// multer learning
+// single field with single file
+app.post("/single-field-single-file", uploads.single("dp"), (req, res) => {
+  console.log(req.body);
+  console.log(req.file);
+  return res.json({ message: "welcome to multer" });
+});
+// single field with multiple files
+app.post(
+  "/single-field-multiple-files",
+  uploads.array("cert", 10),
+  (req, res) => {
+    console.log(req.body);
+    console.log(req.files);
+    return res.json({ message: "successful" });
+  },
+);
+// multiple fields with multiple or single file
+app.post(
+  "/multi-fields-multi-files",
+  uploads.fields([
+    { name: "dp", maxCount: 1 },
+    { name: "cert", maxCount: 10 },
+    { name: "resume", maxCount: 1 },
+  ]),
+  (req, res) => {
+    console.log(req.body);
+    console.log(req.files);
+    return res.json({ message: "multiple files" });
+  },
+);
+app.post("/no-files", uploads.none(), (req, res) => {
+  console.log(req.body);
+  return res.json({ message: "no file " });
+});
 // Error handling middleware
 app.use(errorHandlingMiddleware);
 
