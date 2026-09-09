@@ -8,6 +8,12 @@ dotenv.config();
 import cors from "cors";
 import multer from "multer";
 const uploads = multer({ dest: "./uploads" });
+import { v2 as cloudinary } from "cloudinary";
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_NAME,
+  api_key: process.env.CLOUDINARY_KEY,
+  api_secret: process.env.CLOUDINARY_SECRETE,
+});
 
 function connectDB() {
   mongoose
@@ -35,8 +41,17 @@ app.use(postRoute);
 // multer learning
 // single field with single file
 app.post("/single-field-single-file", uploads.single("dp"), (req, res) => {
-  console.log(req.body);
-  console.log(req.file);
+  cloudinary.uploader
+    .upload(req.file.path, {
+      resource_type: "auto",
+    })
+    .then((response) => {
+      console.log(response);
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+
   return res.json({ message: "welcome to multer" });
 });
 // single field with multiple files
