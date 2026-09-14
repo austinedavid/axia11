@@ -32,9 +32,8 @@ app.use(express.text({ type: "application/xml" }));
 app.use(express.urlencoded());
 app.use(cors({ origin: "http://localhost:3000", credentials: true }));
 
-app.post("/", (req, res) => {
-  console.log(req.body);
-  return res.json({ message: "successful" });
+app.get("/", (req, res) => {
+  return res.json({ message: "welcome to axia deployment" });
 });
 app.use(usersRoute);
 app.use(postRoute);
@@ -85,7 +84,9 @@ app.post("/no-files", uploads.none(), (req, res) => {
 // Error handling middleware
 app.use(errorHandlingMiddleware);
 
-app.listen(4000, () => {
+const port = process.env.PORT || 5000;
+
+app.listen(port, () => {
   connectDB();
   console.log("app is running, change made ");
 });
